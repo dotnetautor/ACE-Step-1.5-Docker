@@ -1,0 +1,72 @@
+name: MusicGenImageBuilder
+
+on:
+  push:
+  pull_request:
+
+env:
+  TARGET_PLATFORM: linux/amd64
+  REGISTRY_BASE: ghcr.io
+
+jobs:
+  create_and_publish:
+    runs-on: ubuntu-22.04
+    permissions:
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Remove unnecessary files
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+      - name: authenticate_with_github_registry
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          SECRET_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_USER="${{ github.actor }}"
+          printf "%s" "${SECRET_TOKEN}" | docker login ${REGISTRY_BASE} --username "${GITHUB_USER}" --password-stdin
+
+      - name: construct_docker_image
+        shell: bash
+        run: |
+          REPOSITORY_PATH="${{ github.repository }}"
+          LOWERCASE_REPO=$(printf "%s" "${REPOSITORY_PATH}" | awk '{print tolower($0)}')
+          TIMESTAMP_TAG=$(date +"%Y%m%d%H%M%S")
+          SHORT_SHA=$(printf "%s" "${{ github.sha }}" | cut -c1-7)
+          
+          IMAGE_BASE="${REGISTRY_BASE}/${LOWERCASE_REPO}"
+          
+          docker buildx build \
+            --platform ${TARGET_PLATFORM} \
+            --tag "${IMAGE_BASE}:latest" \
+            --tag "${IMAGE_BASE}:timestamp-${TIMESTAMP_TAG}" \
+            --tag "${IMAGE_BASE}:sha-${SHORT_SHA}" \
+            --load \
+            .
+
+      - name: upload_to_container_registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          REPOSITORY_PATH="${{ github.repository }}"
+          LOWERCASE_REPO=$(printf "%s" "${REPOSITORY_PATH}" | awk '{print tolower($0)}')
+          TIMESTAMP_TAG=$(date +"%Y%m%d%H%M%S")
+          SHORT_SHA=$(printf "%s" "${{ github.sha }}" | cut -c1-7)
+          
+          IMAGE_BASE="${REGISTRY_BASE}/${LOWERCASE_REPO}"
+          
+          docker push "${IMAGE_BASE}:latest"
+          docker push "${IMAGE_BASE}:timestamp-${TIMESTAMP_TAG}"
+          docker push "${IMAGE_BASE}:sha-${SHORT_SHA}"
+
+
+
+
+
+
