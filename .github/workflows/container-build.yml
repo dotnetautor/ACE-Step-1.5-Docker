@@ -19,6 +19,11 @@ jobs:
       
       - uses: docker/setup-buildx-action@v3
 
+      - name: Remove unnecessary files
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
       - name: authenticate_with_github_registry
         if: github.event_name == 'push'
         shell: bash
