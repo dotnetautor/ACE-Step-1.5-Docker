@@ -1,12 +1,11 @@
 FROM python:3.11-slim-bookworm
 
-RUN apt-get update && apt-get install -y git curl build-essential ca-certificates
+RUN apt-get update && apt-get install -y git build-essential ca-certificates
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /workspace/ace_music_platform
+RUN pip install --no-cache-dir uv
 
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:${PATH}"
+WORKDIR /workspace/ace_music_platform
 
 ARG UPSTREAM_REPOSITORY=https://github.com/ACE-Step/ACE-Step-1.5.git
 RUN git clone ${UPSTREAM_REPOSITORY} source_tree
