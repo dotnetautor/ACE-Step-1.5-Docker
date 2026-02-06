@@ -62,7 +62,6 @@ jobs:
           IMAGE_BASE="${REGISTRY_BASE}/${LOWERCASE_REPO}"
           
           docker push "${IMAGE_BASE}:latest"
-          docker push "${IMAGE_BASE}:timestamp-${TIMESTAMP_TAG}"
           docker push "${IMAGE_BASE}:sha-${SHORT_SHA}"
 
 
