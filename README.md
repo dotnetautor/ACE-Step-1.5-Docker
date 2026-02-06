@@ -54,7 +54,7 @@ docker run -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:latest \
 ```
 
 This configuration:
-- Uses `acestep-5Hz-lm-4B` for best quality and audio understanding
+- Uses `acestep-5Hz-lm-4B` for best quality and audio comprehension
 - Pre-initializes models on startup with `--init_service true`
 - Suitable for GPUs with ≥16GB VRAM
 
@@ -76,7 +76,7 @@ docker run -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:latest \
 
 This configuration:
 - Disables the language model with `--init_llm false` (DiT-only mode)
-- Faster generation and lower memory usage
+- Provides faster generation and lower memory usage
 - Suitable for GPUs with ≤6GB VRAM
 
 For more configuration options and detailed documentation, see the [ACE-Step 1.5 README](https://github.com/ace-step/ACE-Step-1.5/blob/main/README.md).
