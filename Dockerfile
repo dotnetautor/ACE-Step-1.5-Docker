@@ -15,4 +15,4 @@ RUN uv sync
 
 EXPOSE 7860
 
-CMD ["uv", "run", "acestep", "--server-name", "0.0.0.0", "--port", "7860"]
+CMD ["uv", "run", "acestep", "--server-name", "0.0.0.0", "--language", "en", "--download-source", "auto", "--init_service", "true", "--config_path", "acestep-v15-turbo", "--lm_model_path", "acestep-5Hz-lm-1.7B"]
