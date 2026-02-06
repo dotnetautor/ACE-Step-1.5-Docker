@@ -31,6 +31,56 @@ docker run -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:latest
 
 Access the Gradio UI at http://localhost:7860
 
+## Advanced Configuration
+
+### Customizing Docker Run Command
+
+The default docker run command uses the turbo configuration suitable for most users. However, you can customize it based on your GPU's VRAM to optimize performance or quality.
+
+#### For Max Quality (≥16GB VRAM)
+
+If you have a high-end GPU with 16GB or more VRAM, you can use the larger 4B language model for best quality:
+
+```bash
+docker run -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:latest \
+  uv run acestep \
+  --server-name 0.0.0.0 \
+  --port 7860 \
+  --language en \
+  --download-source auto \
+  --init_service true \
+  --config_path acestep-v15-turbo \
+  --lm_model_path acestep-5Hz-lm-4B
+```
+
+This configuration:
+- Uses `acestep-5Hz-lm-4B` for best quality and audio comprehension
+- Pre-initializes models on startup with `--init_service true`
+- Suitable for GPUs with ≥16GB VRAM
+
+#### For Low VRAM (≤6GB)
+
+If you have a GPU with 6GB or less VRAM, you can disable the language model to reduce memory usage:
+
+```bash
+docker run -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:latest \
+  uv run acestep \
+  --server-name 0.0.0.0 \
+  --port 7860 \
+  --language en \
+  --download-source auto \
+  --init_service true \
+  --config_path acestep-v15-turbo \
+  --init_llm false
+```
+
+This configuration:
+- Disables the language model with `--init_llm false` (DiT-only mode)
+- Provides faster generation and lower memory usage
+- Suitable for GPUs with ≤6GB VRAM
+
+For more configuration options and detailed documentation, see the [ACE-Step 1.5 README](https://github.com/ace-step/ACE-Step-1.5/blob/main/README.md).
+
 ## Building from Source
 
 ```bash
