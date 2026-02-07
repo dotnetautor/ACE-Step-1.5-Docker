@@ -100,7 +100,7 @@ docker run --gpus all -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:lates
 **Features:**
 - Uses `--init_llm false` to disable the language model (DiT-only mode)
 - Faster generation with lower memory footprint
-- Generation time: ~10-20 seconds per song on modern GPUs
+- Typical generation time: ~10-20 seconds (times vary by song length and complexity)
 
 ##### For GPUs with 8-16GB VRAM (e.g., RTX 3070, RTX 4060 Ti)
 
@@ -113,7 +113,7 @@ docker run --gpus all -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:lates
 **Features:**
 - Uses the default 1.7B language model (`acestep-5Hz-lm-1.7B`)
 - Balanced performance and quality
-- Generation time: ~5-15 seconds per song
+- Typical generation time: ~5-15 seconds (times vary by song length and complexity)
 
 ##### For GPUs with 16GB or More VRAM (e.g., RTX 3090, RTX 4090, A100)
 
@@ -134,7 +134,7 @@ docker run --gpus all -p 7860:7860 ghcr.io/dotnetautor/ace-step-1.5-docker:lates
 **Features:**
 - Uses the larger `acestep-5Hz-lm-4B` model for best quality
 - Superior audio comprehension and music planning
-- Generation time: Under 2 seconds per song on A100, ~5-10 seconds on RTX 3090/4090
+- Typical generation time: <2 seconds on A100, ~5-10 seconds on RTX 3090/4090 (times vary by song length and complexity)
 
 #### Step 4: Access the Web Interface
 
@@ -147,11 +147,13 @@ The interface will be the same as the CPU version, but music generation will be 
 
 ### Quick Reference: GPU Configuration Comparison
 
-| GPU VRAM | Configuration | Language Model | Generation Speed | Best For |
-|----------|---------------|----------------|------------------|----------|
+| GPU VRAM | Configuration | Language Model | Typical Generation Speed* | Best For |
+|----------|---------------|----------------|---------------------------|----------|
 | ≤6GB | `--init_llm false` | Disabled (DiT-only) | ~10-20s | Low-end GPUs, minimal VRAM |
 | 8-16GB | Default | 1.7B (compact) | ~5-15s | Most users, balanced performance |
-| ≥16GB | `--lm_model_path acestep-5Hz-lm-4B` | 4B (large) | <2-10s | High-end GPUs, maximum quality |
+| ≥16GB | `--lm_model_path acestep-5Hz-lm-4B` | 4B (large) | ~2-10s | High-end GPUs, maximum quality |
+
+*Generation times are approximate and vary based on song length, complexity, and prompt requirements.
 
 ### Additional Configuration Options
 
