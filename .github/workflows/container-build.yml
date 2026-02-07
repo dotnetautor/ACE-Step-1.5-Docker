@@ -63,7 +63,40 @@ jobs:
           
           docker push "${IMAGE_BASE}:latest"
           docker push "${IMAGE_BASE}:sha-${SHORT_SHA}"
+  
+  build-and-push-dockerhub:
+    runs-on: ubuntu-latest
+    needs: create_and_publish  # Run after GHCR succeeds
+    continue-on-error: true  # Don't fail workflow if Docker Hub has issues
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Use native docker build/push instead of buildx (better for large layers)
+      - name: Build Docker image
+        run: |
+          docker build -t dotnetautor/ace-step-1.5-docker:latest -t dotnetautor/ace-step-1.5-docker:${{ github.sha }} .
+
+      - name: Push to Docker Hub (with retry)
+        run: |
+          for i in 1 2 3; do
+            echo "Push attempt $i..."
+            if docker push dotnetautor/ace-step-1.5-docker:latest && docker push dotnetautor/ace-step-1.5-docker:${{ github.sha }}; then
+              echo "Push successful!"
+              exit 0
+            fi
+            echo "Push failed, waiting 30s before retry..."
+            sleep 30
+          done
+          echo "All push attempts failed"
+          exit 1
 
 
 
